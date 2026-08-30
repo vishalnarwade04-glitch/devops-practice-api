@@ -25,3 +25,16 @@ jobs:
 
       - name: Run tests
         run: pytest -v
+
+  docker-test:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t devops-practice-api .
+
+      - name: Run tests inside container
+        run: docker run --rm devops-practice-api pytest 
