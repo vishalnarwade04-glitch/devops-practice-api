@@ -37,4 +37,31 @@ jobs:
         run: docker build -t devops-practice-api .
 
       - name: Run tests inside container
-        run: docker run --rm devops-practice-api pytest 
+        run: docker run --rm devops-practice-api pytest -v
+
+  push:
+    runs-on: ubuntu-latest
+    needs: docker-test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}:latest
+            ghcr.io/${{ github.repository }}:${{ github.sha }}
