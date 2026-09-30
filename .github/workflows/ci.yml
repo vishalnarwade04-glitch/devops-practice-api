@@ -24,7 +24,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Run tests
-        run: pytest -v
+        run: pytest test_app.py -v
 
   docker-test:
     runs-on: ubuntu-latest
@@ -37,7 +37,7 @@ jobs:
         run: docker build -t devops-practice-api .
 
       - name: Run tests inside container
-        run: docker run --rm devops-practice-api pytest -v
+        run: docker run --rm devops-practice-api pytest test_app.py -v
 
   push:
     runs-on: ubuntu-latest
